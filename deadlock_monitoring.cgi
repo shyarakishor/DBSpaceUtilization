@@ -18,7 +18,7 @@ use lib "$base_dir/lib64/perl5";
 use CGI qw(:standard);
 use CGI::Carp qw(fatalsToBrowser) ;
 use YAML::XS qw(LoadFile Load);
-use Template;
+use Template::Template;
 use JSON;
 
 ##################################################
