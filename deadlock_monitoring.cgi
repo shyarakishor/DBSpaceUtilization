@@ -15,12 +15,13 @@ BEGIN {
 # Dependencies ####################################
 
 use lib "$base_dir/lib64/perl5";
+
 use CGI qw(:standard);
 use CGI::Carp qw(fatalsToBrowser) ;
 use YAML::XS qw(LoadFile Load);
-use Template::Template;
+use Template qw(process);;
 use JSON;
-
+use Data::Dumper;
 ##################################################
 
 # Version Info ###################################
@@ -123,6 +124,7 @@ if( scalar @$csv_lines ) {
 my $data_json = to_json( $final_data_array );
 $data_json =~ s/\"//g;
 ##generate template
+
 my $config_template = {
 	INCLUDE_PATH => $base_dir."/Templates",  # or list ref
 	INTERPOLATE  => 1,               # expand "$var" in plain text
@@ -130,8 +132,13 @@ my $config_template = {
 	PRE_PROCESS  => '',              # prefix each template
 	EVAL_PERL    => 1,               # evaluate Perl code blocks
 };
-
-my $obj_template = Template->new($config_template);
+my $obj_template = undef;
+eval {
+	$obj_template = Template->new($config_template);
+};
+if ( $@ ) {
+	print $@;
+}
 
 ##feeddata in template
 my $template_hash = {};
@@ -156,7 +163,7 @@ $template_hash->{'data_json'}    = $data_json;
 $template_hash->{'footer_hash'}  = $footer_hash;
 $template_hash->{'header_title'} = $header_title;
 
-$obj_template->process('linechart.html', $template_hash) || die "Template process failed: ", $obj_template->error(), "\n";
+# Template::process({'linechart.html'}, $template_hash) || die "Template process failed: ", $obj_template->error(), "\n";
 
 ##trim
 sub trim_space {
@@ -180,3 +187,55 @@ sub check_convert_date_format {
 	
 	return $new_date;
 }
+
+print <<HEADER;
+<!DOCTYPE HTML>
+<html>
+<head>
+</head>
+HEADER
+print <<BODY;
+<body>
+<div id='chartContainer' style='height: 300px; width: 100%;'>
+</div>
+</body>
+BODY
+print <<FOOTER;
+<footer>
+<div style='text-align: center;'>
+<p style='margin: 5px 25px 0 25px; color: $template_hash->{footer_hash}->{color};font-weight: $template_hash->{footer_hash}->{color}; font-size: $template_hash->{footer_hash}->{size}'>$template_hash->{footer_hash}->{text}</p>
+</div>
+
+<script type='text/javascript' src='https://canvasjs.com/assets/script/canvasjs.min.js'></script></head>
+<script type='text/javascript'>
+
+var chart = new CanvasJS.Chart('chartContainer',
+    {
+      animationEnabled: true, 
+      zoomEnabled: true, 
+      markerEnabled: true,
+      title:{
+        text: '$template_hash->{header_title}'
+      },
+      axisX: {
+        interval:0,
+        valueFormatString: '$template_hash->{value_format_string}'
+      },
+      axisY:{
+        includeZero: false
+      },
+      data: [
+      {
+        type: 'line',
+        markerType: 'circle',
+        markerSize: 10,
+        dataPoints: $template_hash->{data_json}  
+      }
+      ]
+    });
+
+    chart.render();
+</script>
+</footer>
+</html>
+FOOTER
