@@ -55,7 +55,7 @@ sub process {
     my ($output, $error);
     my $options = (@opts == 1) && ref($opts[0]) eq 'HASH'
         ? shift(@opts) : { @opts };
-
+        
     $options->{ binmode } = $BINMODE
         unless defined $options->{ binmode };
 

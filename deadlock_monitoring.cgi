@@ -31,10 +31,12 @@ my $VERSION = "1.0.0";
 my $q = new CGI;
 print $q->header;
 
+my $config_file = $q->param('config_file');
+
 #################
 # Config Values #
 #################
-my $CONFIG_FILE = "$base_dir/resources/deadcheckconf.yml";
+my $CONFIG_FILE = "$base_dir/resources/$config_file";
 
 # Load Config Data #######################################	
 my $filedata = LoadFile($CONFIG_FILE);
