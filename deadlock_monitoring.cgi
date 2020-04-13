@@ -198,6 +198,9 @@ print <<HEADER;
 HEADER
 print <<BODY;
 <body>
+<div style='text-align: center;'>
+<p style='margin: 5px 25px 0 25px; color: $template_hash->{footer_hash}->{color};font-weight: $template_hash->{footer_hash}->{color}; font-size: $template_hash->{footer_hash}->{size}'>$template_hash->{header_title}</p>
+</div>
 <div id='chartContainer' style='height: 300px; width: 100%;'>
 </div>
 </body>
@@ -216,9 +219,6 @@ var chart = new CanvasJS.Chart('chartContainer',
       animationEnabled: true, 
       zoomEnabled: true, 
       markerEnabled: true,
-      title:{
-        text: '$template_hash->{header_title}'
-      },
       axisX: {
         interval:0,
         valueFormatString: '$template_hash->{value_format_string}'
