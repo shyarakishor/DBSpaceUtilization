@@ -144,14 +144,21 @@ if ( $@ ) {
 
 ##feeddata in template
 my $template_hash = {};
+my $interval = 0;
+my $interval_type = '';
 if ( $graph_frequency =~ /Day/i ) {
 	$template_hash->{'value_format_string'} = 'MM/DD/YYYY';
+	$interval_type = 'day';
 }
 elsif ( $graph_frequency =~ /Month/i ) {
 	$template_hash->{'value_format_string'} = 'MMM';
+	$interval_type = 'month';
+	$interval = 1;
 }
 elsif ( $graph_frequency =~ /Year/i ) {
 	$template_hash->{'value_format_string'} = 'YYYY';
+	$interval_type = 'year';
+	$interval = 1;
 }
 elsif ( $graph_frequency =~ /Week/i ) {
 	$template_hash->{'value_format_string'} = 'DDD';
@@ -220,10 +227,14 @@ var chart = new CanvasJS.Chart('chartContainer',
       zoomEnabled: true, 
       markerEnabled: true,
       axisX: {
-        interval:0,
+        interval: $interval,
+        intervalType: '$interval_type',
         valueFormatString: '$template_hash->{value_format_string}'
       },
       axisY:{
+      	interval:10,
+      	suffix: "%",
+      	maximum: 100,
         includeZero: false
       },
       data: [
