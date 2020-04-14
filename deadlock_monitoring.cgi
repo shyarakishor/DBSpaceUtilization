@@ -71,6 +71,21 @@ if ( $to_date && $to_date !~ /^\s*$/ ) {
 	$to_date   = &check_convert_date_format( $to_date );
 }
 
+my $months_day = {
+	'01' => 31,
+	'02' => 28,
+	'03' => 31,
+	'04' => 30,
+	'05' => 31,
+	'06' => 30,
+	'07' => 31,
+	'08' => 31,
+	'09' => 30,
+	'10' => 31,
+	'11' => 30,
+	'12' => 31
+};
+
 ##start read and prepare Graph
 my $final_data_array = [];
 if( scalar @$csv_lines ) {
@@ -96,10 +111,26 @@ if( scalar @$csv_lines ) {
 
 						$value = &trim_space( $value );
 
-						push @$final_data_array, {
-							x => "new Date($y, $m, $d)",
-							y => $value
-						};
+						if ( $graph_frequency =~ /Month/i ) { 
+							if ( $y % 4 == 0 ) {
+								$months_day->{'02'} = 29;
+							}
+							
+							my $month_last_date = sprintf('%04d', $y).'-'.sprintf('%02d', $m).'-'.sprintf('%02d', $d);
+							my $current_date = sprintf('%04d', $y).'-'.sprintf('%02d', $m).'-'.$months_day->{sprintf('%02d', $m)};
+							if ( $current_date eq $month_last_date ) {
+								push @$final_data_array, {
+									x => "new Date($y, $m, $d)",
+									y => $value
+								};
+							}
+						}
+						else {
+							push @$final_data_array, {
+								x => "new Date($y, $m, $d)",
+								y => $value
+							};
+						}
 					}
 				}
 			}
@@ -113,10 +144,33 @@ if( scalar @$csv_lines ) {
 					$m -= 1;
 					my $new_date = sprintf('%02d', $m).'/'.sprintf('%02d', $d).'/'.sprintf('%02d', $y);
 
-					push @$final_data_array, {
-						x => "new Date($y, $m, $d)",
-						y => $value
-					};
+					if ( $graph_frequency =~ /Month/i ) { 
+						if ( $y % 4 == 0 ) {
+							$months_day->{'02'} = 29;
+						}
+
+						my $two_digit_month = sprintf('%02d', $m+1);
+						my $month_last_date = sprintf('%04d', $y).'-'.sprintf('%02d', $m).'-'.sprintf('%02d', $d);
+						my $current_date = sprintf('%04d', $y).'-'.sprintf('%02d', $m).'-'.$months_day->{$two_digit_month};
+						
+						if ( $current_date eq $month_last_date ) {
+							# print $month_last_date.'---'.$current_date."\n";
+							push @$final_data_array, {
+								x => "new Date($y, $m, $d)",
+								y => $value
+							};
+						}
+					}
+					else {
+						push @$final_data_array, {
+							x => "new Date($y, $m, $d)",
+							y => $value
+						};
+					}
+					# push @$final_data_array, {
+					# 	x => "new Date($y, $m, $d)",
+					# 	y => $value
+					# };
 				}
 			}
 		}
