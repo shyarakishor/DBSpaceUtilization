@@ -22,16 +22,6 @@ use YAML::XS qw(LoadFile Load);
 my $VERSION = "1.1.0";
 ##################################################
 
-# my $q = new CGI;
-my $q = CGI->new;
-print $q->header;
-
-my $config_file = $q->param('config_file');
-
-#################
-# Config Values #
-#################
-my $CONFIG_FILE = "$base_dir/resources/$config_file";
 
 package ASE;
 sub new {
@@ -1846,7 +1836,14 @@ EOL
 ###########################################################################
 package main;
 
+my $q = CGI->new;
 
+my $config_file = $q->param('config_file');
+
+#################
+# Config Values #
+#################
+my $CONFIG_FILE = "$base_dir/resources/$config_file";
 
 # Load Config Data #######################################	
 my $filedata = YAML::XS::LoadFile($CONFIG_FILE);
