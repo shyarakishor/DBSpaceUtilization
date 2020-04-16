@@ -118,7 +118,6 @@ tr:nth-child(even) {
 </style>
 </head>
 HEADER
-
 print <<BODY;
 <body>
 <div style='text-align: center;'>
@@ -137,6 +136,7 @@ print <<BODY;
 </table>
 </body>
 BODY
+
 print <<FOOTER;
 <footer>
 <div style='text-align: center;'>
