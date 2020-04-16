@@ -1877,7 +1877,7 @@ my $nav = $q->param('Nav');
 
 my $aseapp = ASE->new($my_url, $home_button, $nav);
 my $argcount = scalar @args;
-if ($argcount <= 1) {
+if ($argcount <= 2) {
 	print $q->header();
 	$aseapp->displayheader($header_text, $subheader_text, $fontsizemenu);
 	$aseapp->displaymenusection(@menu);
