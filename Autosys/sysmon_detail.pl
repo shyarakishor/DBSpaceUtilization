@@ -137,7 +137,6 @@ print <<BODY;
 </table>
 </body>
 BODY
-
 print <<FOOTER;
 <footer>
 <div style='text-align: center;'>
