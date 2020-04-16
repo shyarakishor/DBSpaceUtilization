@@ -63,6 +63,9 @@ else {
 }
 
 ####Read CSV File and Collect Lines END
+
+my $header_fields = $filedata->{'detail_fields'};
+
 ##start read and prepare Graph
 my $final_data_array = [];
 my $html_table_string = '';
@@ -102,7 +105,7 @@ print <<HEADER;
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
-  width: 60%;
+  width: 100%;
   align: center;
 }
 
@@ -126,12 +129,12 @@ print <<BODY;
 </div>
 <table align="center">
   <tr>
-    <th>Server</th>
-    <th>Field1</th>
-    <th>Field2</th>
-    <th>Field3</th>
-    <th>Field4</th>
-    <th>Field5</th>
+    <th>$header_fields->{'field1'}</th>
+    <th>$header_fields->{'field2'}</th>
+    <th>$header_fields->{'field3'}</th>
+    <th>$header_fields->{'field4'}</th>
+    <th>$header_fields->{'field5'}</th>
+    <th>$header_fields->{'field6'}</th>
   </tr>
   $html_table_string
 </table>
