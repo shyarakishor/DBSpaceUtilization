@@ -135,13 +135,10 @@ print <<BODY;
   $html_table_string
 </table>
 </body>
-BODY
-
-print <<FOOTER;
 <footer>
 <div style='text-align: center;'>
 <p style='margin: 5px 25px 0 25px; color: $footer_hash->{color};font-weight: $footer_hash->{color}; font-size: $footer_hash->{size}'>$footer_hash->{text}</p>
 </div>
 </footer>
 </html>
-FOOTER
+BODY
