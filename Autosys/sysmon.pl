@@ -29,6 +29,7 @@ my $VERSION = "1.0.0";
 ##################################################
 
 my $q = new CGI;
+
 print $q->header;
 
 my $config_file = $q->param('config_file');
@@ -59,6 +60,7 @@ else {
 	print "Cannot open $csv_file"; 
 	die;
 }
+
 ####Read CSV File and Collect Lines END
 ##start read and prepare Graph
 my $final_data_array = [];
@@ -79,11 +81,10 @@ if( scalar @$csv_lines ) {
 		}
 
 		push @$final_data_array, {
-			'server' => $server,
-			'status' => $status,
+			'server'   => $server,
+			'status'   => $status,
 			'is_green' => $is_green
 		};
-
 
 		$html_table_string .= '<tr><td><a href="sysmon_detail.pl?config_file='.$config_file.'&server='.$server.'" target="_blank">'.$server.'</a></td><td style="background-color:'.$color.'"><a href="sysmon_detail.pl?config_file='.$config_file.'&server='.$server.'" target="_blank">'.$status.'</a></td></tr>';
 	}
@@ -99,7 +100,6 @@ sub trim_space {
 	return $line;
 }
 
-
 print <<HEADER;
 <!DOCTYPE HTML>
 <html>
@@ -111,25 +111,23 @@ table {
   width: 60%;
   align: center;
 }
-
 td, th {
   border: 1px solid #dddddd;
   text-align: left;
   padding: 8px;
 }
-
 tr:nth-child(even) {
   background-color: #dddddd;
 }
 </style>
 </head>
 HEADER
+
 print <<BODY;
 <body>
 <div style='text-align: center;'>
 <p style='margin: 5px 25px 0 25px; color: $footer_hash->{color};font-weight: $footer_hash->{color}; font-size: $footer_hash->{size}'>$header_title</p>
 </div>
-
 <table align="center">
   <tr>
     <th>Server</th>
@@ -139,6 +137,7 @@ print <<BODY;
 </table>
 </body>
 BODY
+
 print <<FOOTER;
 <footer>
 <div style='text-align: center;'>

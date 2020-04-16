@@ -29,6 +29,7 @@ my $VERSION = "1.0.0";
 ##################################################
 
 my $q = new CGI;
+
 print $q->header;
 
 my $config_file = $q->param('config_file');
@@ -42,9 +43,9 @@ my $CONFIG_FILE = "$base_dir/resources/$config_file";
 # Load Config Data #######################################	
 my $filedata = LoadFile($CONFIG_FILE);
 
-my $header_title    = $filedata->{header_title};
-my $csv_file        = $filedata->{detail_file};
-my $footer_hash     = $filedata->{footer};
+my $header_title = $filedata->{header_title};
+my $csv_file     = $filedata->{detail_file};
+my $footer_hash  = $filedata->{footer};
 
 ####Read CSV File and Collect Lines
 my $csv_lines = [];
@@ -60,6 +61,7 @@ else {
 	print "Cannot open $csv_file"; 
 	die;
 }
+
 ####Read CSV File and Collect Lines END
 ##start read and prepare Graph
 my $final_data_array = [];
@@ -92,7 +94,6 @@ sub trim_space {
 	return $line;
 }
 
-
 print <<HEADER;
 <!DOCTYPE HTML>
 <html>
@@ -117,12 +118,12 @@ tr:nth-child(even) {
 </style>
 </head>
 HEADER
+
 print <<BODY;
 <body>
 <div style='text-align: center;'>
 <p style='margin: 5px 25px 0 25px; color: $footer_hash->{color};font-weight: $footer_hash->{color}; font-size: $footer_hash->{size}'>$header_title</p>
 </div>
-
 <table align="center">
   <tr>
     <th>Server</th>
@@ -136,6 +137,7 @@ print <<BODY;
 </table>
 </body>
 BODY
+
 print <<FOOTER;
 <footer>
 <div style='text-align: center;'>
