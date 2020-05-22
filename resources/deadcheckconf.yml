@@ -1,8 +1,9 @@
 ---
 header_title: Deadlock Monitoring
-file: /home/dell/Work/mohan/task1/CSV/test.csv
-
-graph_frequency: Month
+file: /home/dell/Work/mohan/DBSpaceUtilization/CSV/test.csv
+fromdate: 1/1/2020 00:00
+todate: 1/2/2020 24:00
+graph_frequency: Hour
 footer:
   text: "DB Space Utilization"
   style: bold
