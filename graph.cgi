@@ -192,7 +192,7 @@ if( scalar @$csv_lines ) {
 
 my $data_json = to_json( $final_data_array );
 $data_json =~ s/\"//g;
-# print $data_json;
+print $data_json;
 
 ##feeddata in template
 my $template_hash = {};
