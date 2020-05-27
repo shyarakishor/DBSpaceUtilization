@@ -19,9 +19,7 @@ use lib "$base_dir/lib64/perl5";
 use CGI qw(:standard);
 use CGI::Carp qw(fatalsToBrowser) ;
 use YAML::XS qw(LoadFile Load);
-use Template qw(process);;
 use JSON;
-use Data::Dumper;
 ##################################################
 
 # Version Info ###################################
@@ -192,7 +190,7 @@ if( scalar @$csv_lines ) {
 
 my $data_json = to_json( $final_data_array );
 $data_json =~ s/\"//g;
-print $data_json;
+# print $data_json;
 
 ##feeddata in template
 my $template_hash = {};
@@ -228,8 +226,6 @@ $template_hash->{'final_data_array'}    = $final_data_array;
 $template_hash->{'data_json'}    = $data_json;
 $template_hash->{'footer_hash'}  = $footer_hash;
 $template_hash->{'header_title'} = $header_title;
-
-# Template::process({'linechart.html'}, $template_hash) || die "Template process failed: ", $obj_template->error(), "\n";
 
 ##trim
 sub trim_space {
