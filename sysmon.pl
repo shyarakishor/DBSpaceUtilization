@@ -288,7 +288,7 @@ BODY
 print <<FOOTER;
 <footer>
 <div style='text-align: center;'>
-<p style='margin: 5px 25px 0 25px; color: $template_hash->{footer_hash}->{color};font-weight: $template_hash->{footer_hash}->{color}; font-size: $template_hash->{footer_hash}->{size}'>$template_hash->{footer_hash}->{text}</p>
+<p style='margin: 5px 25px 0 25px; color: $template_hash->{footer_hash}->{color};font-weight: $template_hash->{footer_hash}->{color}; font-size: $template_hash->{footer_hash}->{size}'>FromDate: $from_date & ToDate: $to_date - $template_hash->{footer_hash}->{text}</p>
 </div>
 <script type='text/javascript' src='https://canvasjs.com/assets/script/canvasjs.min.js'></script></head>
 <script type='text/javascript'>
