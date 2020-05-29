@@ -32,6 +32,7 @@ my $q = new CGI;
 print $q->header;
 
 my $config_file = $q->param('config_file');
+my $action = $q->param('action');
 
 #################
 # Config Values #
@@ -40,12 +41,19 @@ my $CONFIG_FILE = "$base_dir/resources/$config_file";
 
 # Load Config Data #######################################
 my $filedata = LoadFile($CONFIG_FILE);
+print $action;
+##check params
+if ( !defined $action || $action =~ /^\s*$/i ) {
+    &display_form();
+    exit;
+}
+
 
 my $header_title    = $filedata->{header_title};
 my $csv_file        = $filedata->{file};
-my $from_date       = $filedata->{fromdate};
-my $to_date         = $filedata->{todate};
-my $graph_frequency = $filedata->{graph_frequency};
+my $from_date       = $q->param('fromdate') || $filedata->{fromdate};
+my $to_date         = $q->param('todate') || $filedata->{todate};
+my $graph_frequency = $q->param('graph_frequency') || $filedata->{graph_frequency};
 my $footer_hash     = $filedata->{footer};
 
 ####Read CSV File and Collect Lines
@@ -114,17 +122,17 @@ if( scalar @$csv_lines ) {
 
                                                 if ( $graph_frequency =~ /Month/i ) {
                                                         if ( $y % 4 == 0 ) {
-                                                                $months_day->{'02'} = 29;
+                                                            $months_day->{'02'} = 29;
                                                         }
 
                                                         my $month_last_date = sprintf('%04d', $y).'-'.sprintf('%02d', $m).'-'.sprintf('%02d', $d);
                                                         my $current_date = sprintf('%04d', $y).'-'.sprintf('%02d', $m).'-'.$months_day->{sprintf('%02d', $m)};
-                                                        if ( $current_date eq $month_last_date ) {
-                                                                push @$final_data_array, {
-                                                                        x => "new Date($y, $m, $d)",
-                                                                        y => $value
-                                                                };
-                                                        }
+                                                        # if ( $current_date eq $month_last_date ) {
+                                                            push @$final_data_array, {
+                                                                x => "new Date($y, $m, $d)",
+                                                                y => $value
+                                                            };
+                                                        # }
                                                 }
                                                 elsif ( $graph_frequency =~ /hour/i ) {
                                                     push @$final_data_array, {
@@ -161,13 +169,13 @@ if( scalar @$csv_lines ) {
                                                 my $month_last_date = sprintf('%04d', $y).'-'.sprintf('%02d', $m).'-'.sprintf('%02d', $d);
                                                 my $current_date = sprintf('%04d', $y).'-'.sprintf('%02d', $m).'-'.$months_day->{$two_digit_month};
 
-                                                if ( $current_date eq $month_last_date ) {
+                                                # if ( $current_date eq $month_last_date ) {
                                                         # print $month_last_date.'---'.$current_date."\n";
                                                         push @$final_data_array, {
                                                                 x => "new Date($y, $m, $d)",
                                                                 y => $value
                                                         };
-                                                }
+                                                # }
                                         }
                                         elsif ( $graph_frequency =~ /hour/i ) {
                                             push @$final_data_array, {
@@ -268,6 +276,116 @@ sub check_convert_date_format {
         my $new_date = sprintf('%02d', $m).'/'.sprintf('%02d', $d).'/'.sprintf('%02d', $y).' '.sprintf('%02d', $hh).':'.sprintf('%02d', $mm);
 
         return $new_date;
+}
+
+sub display_form {
+print <<HEADER;
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Add padding to containers */
+.container {
+  padding: 16px;
+  background-color: white;
+}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 20%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+.graph_frequency {
+    width: 20%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Overwrite default styles of hr */
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+.signin {
+  background-color: #f1f1f1;
+  text-align: center;
+}
+</style>
+</head>
+HEADER
+print <<BODY;
+<body>
+ <div class="container">
+<form action="sysmon.pl?config_file=$config_file" method="POST">
+    <input type="hidden" name="action" value="graph" />
+    <input type="hidden" name="config_file" value="$config_file" />
+  <label for="fname">Graph Freuency:</label><br>
+  <select class="graph_frequency" name="graph_frequency" id="graph_frequency">
+    <option value="hour">Hour</option>
+    <option value="day">Day</option>
+    <option value="month">Month</option>
+    <option value="year">Year</option>
+  <select><br>
+  <label for="lname">Start Date Time:</label><br>
+  <input type="text" class="fromdate" id="fromdate" name="fromdate" value=""><br>
+  <label for="lname">End Date Time:</label><br>
+  <input type="text" class="todate" id="todate" name="todate" value=""><br><br>
+  <input class="signin" type="submit" value="Submit">
+</form> 
+</div>
+</body>
+BODY
+print <<FOOTER;
+<footer>
+<script type='text/javascript'>
+jQuery(function() {
+  jQuery('.fromdate').daterangepicker({
+    singleDatePicker: true,
+    timePicker: true,
+    timePicker24Hour: true,
+    locale: {
+      format: 'MM/DD/YYYY HH:mm'
+    }
+  });
+  jQuery('.todate').daterangepicker({
+    singleDatePicker: true,
+    timePicker: true,
+    timePicker24Hour: true,
+    locale: {
+      format: 'MM/DD/YYYY HH:mm'
+    }
+  });
+});
+</script>
+</footer>
+</html>
+FOOTER
 }
 
 print <<HEADER;
