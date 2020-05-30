@@ -41,7 +41,7 @@ my $CONFIG_FILE = "$base_dir/resources/$config_file";
 
 # Load Config Data #######################################
 my $filedata = LoadFile($CONFIG_FILE);
-print $action;
+
 ##check params
 if ( !defined $action || $action =~ /^\s*$/i ) {
     &display_form();
@@ -342,7 +342,7 @@ HEADER
 print <<BODY;
 <body>
  <div class="container">
-<form action="sysmon.pl?config_file=$config_file" method="POST">
+<form action="sysmon.pl?config_file=$config_file" onsubmit="return check_validation();" method="POST">
     <input type="hidden" name="action" value="graph" />
     <input type="hidden" name="config_file" value="$config_file" />
   <label for="fname">Graph Freuency:</label><br>
@@ -382,6 +382,47 @@ jQuery(function() {
     }
   });
 });
+
+function check_validation() {
+    var graph_frequency = jQuery('#graph_frequency').val();
+    var fromdate = jQuery('#fromdate').val();
+    var todate = jQuery('#todate').val();
+
+    var date1=fromdate.split(' ')[0];
+    var date2=todate.split(' ')[0];
+
+    var dates1 = new Date(date1);
+    var dates2 = new Date(date2);
+    var diffDays = parseInt((dates2 - dates1) / (1000 * 60 * 60 * 24), 10); 
+
+    if ( graph_frequency == 'hour' ) {
+        if ( date1 != date2 ) {
+            alert("For Graph Frequency Hour Start and End date should be same");
+            return false;
+        }
+    }
+    if ( graph_frequency == 'day' ) {
+        if ( date1 == date2 ) {
+            alert("For Graph Frequency Day Start and End date should not be same");
+            return false;
+        }
+        if ( diffDays > 15 ) {
+            alert("For Graph Frequency Day Start and End date should not be more then 15 days");
+            return false;
+        }
+    }
+    if ( graph_frequency == 'month' ) {
+        if ( date1 == date2 ) {
+            alert("For Graph Frequency Month Start and End date should not be same");
+            return false;
+        }
+        if ( diffDays < 31 ) {
+            alert("For Graph Frequency Month Start and End date should be more then 30 days");
+            return false;
+        }
+    }
+    return true;
+}
 </script>
 </footer>
 </html>
