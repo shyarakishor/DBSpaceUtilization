@@ -51,8 +51,8 @@ if ( !defined $action || $action =~ /^\s*$/i ) {
 
 my $header_title    = $filedata->{header_title};
 my $csv_file        = $filedata->{file};
-my $from_date       = $q->param('fromdate') || $filedata->{fromdate};
-my $to_date         = $q->param('todate') || $filedata->{todate};
+my $from_date       = $q->param('fromdate').' '.$q->param('fromtime') || $filedata->{fromdate};
+my $to_date         = $q->param('todate').' '.$q->param('totime') || $filedata->{todate};
 my $graph_frequency = $q->param('graph_frequency') || $filedata->{graph_frequency};
 my $footer_hash     = $filedata->{footer};
 
@@ -220,11 +220,12 @@ if ( $@ ) {
 
 ##feeddata in template
 my $template_hash = {};
-my $interval = 0;
+my $interval = 1;
 my $interval_type = '';
 if ( $graph_frequency =~ /Day/i ) {
         $template_hash->{'value_format_string'} = 'MM/DD/YYYY';
         $interval_type = 'day';
+        $interval = 1;
 }
 elsif ( $graph_frequency =~ /Month/i ) {
         $template_hash->{'value_format_string'} = 'MMM';
@@ -283,10 +284,9 @@ print <<HEADER;
 <!DOCTYPE HTML>
 <html>
 <head>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src='https://code.jquery.com/jquery-1.12.4.js'></script>
+    <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.js'></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body {
@@ -313,7 +313,7 @@ input[type=text], input[type=password] {
   background: #f1f1f1;
 }
 
-.graph_frequency {
+.graph_frequency, .fromtime, .totime {
     width: 20%;
   padding: 15px;
   margin: 5px 0 22px 0;
@@ -352,10 +352,64 @@ print <<BODY;
     <option value="month">Month</option>
     <option value="year">Year</option>
   <select><br>
-  <label for="lname">Start Date Time:</label><br>
-  <input type="text" class="fromdate" id="fromdate" name="fromdate" value=""><br>
-  <label for="lname">End Date Time:</label><br>
-  <input type="text" class="todate" id="todate" name="todate" value=""><br><br>
+  <label for="lname">Start Date & Time:</label><br>
+  <input type="text" class="fromdate" id="fromdate" name="fromdate" value="">
+  <select class="fromtime" name="fromtime" id="fromtime">
+    <option value="00:00" selected>00:00</option>
+    <option value="01:00">01:00</option>
+    <option value="02:00">02:00</option>
+    <option value="03:00">03:00</option>
+    <option value="04:00">04:00</option>
+    <option value="05:00">05:00</option>
+    <option value="06:00">06:00</option>
+    <option value="07:00">07:00</option>
+    <option value="08:00">08:00</option>
+    <option value="09:00">09:00</option>
+    <option value="10:00">10:00</option>
+    <option value="11:00">11:00</option>
+    <option value="12:00">12:00</option>
+    <option value="13:00">13:00</option>
+    <option value="14:00">14:00</option>
+    <option value="15:00">15:00</option>
+    <option value="16:00">16:00</option>
+    <option value="17:00">17:00</option>
+    <option value="18:00">18:00</option>
+    <option value="19:00">19:00</option>
+    <option value="20:00">20:00</option>
+    <option value="21:00">21:00</option>
+    <option value="22:00">22:00</option>
+    <option value="23:00">23:00</option>
+    <option value="24:00">24:00</option>
+  <select><br>
+  <label for="lname">End Date & Time:</label><br>
+  <input type="text" class="todate" id="todate" name="todate" value="">
+  <select class="totime" name="totime" id="totime">
+    <option value="00:00">00:00</option>
+    <option value="01:00">01:00</option>
+    <option value="02:00">02:00</option>
+    <option value="03:00">03:00</option>
+    <option value="04:00">04:00</option>
+    <option value="05:00">05:00</option>
+    <option value="06:00">06:00</option>
+    <option value="07:00">07:00</option>
+    <option value="08:00">08:00</option>
+    <option value="09:00">09:00</option>
+    <option value="10:00">10:00</option>
+    <option value="11:00">11:00</option>
+    <option value="12:00">12:00</option>
+    <option value="13:00">13:00</option>
+    <option value="14:00">14:00</option>
+    <option value="15:00">15:00</option>
+    <option value="16:00">16:00</option>
+    <option value="17:00">17:00</option>
+    <option value="18:00">18:00</option>
+    <option value="19:00">19:00</option>
+    <option value="20:00">20:00</option>
+    <option value="21:00">21:00</option>
+    <option value="22:00">22:00</option>
+    <option value="23:00">23:00</option>
+    <option value="24:00" selected>24:00</option>
+  <select><br><br>
   <input class="signin" type="submit" value="Submit">
 </form> 
 </div>
@@ -365,22 +419,14 @@ print <<FOOTER;
 <footer>
 <script type='text/javascript'>
 jQuery(function() {
-  jQuery('.fromdate').daterangepicker({
-    singleDatePicker: true,
-    timePicker: true,
-    timePicker24Hour: true,
-    locale: {
-      format: 'MM/DD/YYYY HH:mm'
-    }
-  });
-  jQuery('.todate').daterangepicker({
-    singleDatePicker: true,
-    timePicker: true,
-    timePicker24Hour: true,
-    locale: {
-      format: 'MM/DD/YYYY HH:mm'
-    }
-  });
+  
+
+  jQuery(document).ready(function() {
+    jQuery('#fromdate').datepicker();
+    jQuery( "#fromdate" ).datepicker( "option", "dateFormat", "mm/dd/yy" );
+    jQuery('#todate').datepicker();
+    jQuery( "#todate" ).datepicker( "option", "dateFormat", "mm/dd/yy" );
+});
 });
 
 function check_validation() {
@@ -388,8 +434,8 @@ function check_validation() {
     var fromdate = jQuery('#fromdate').val();
     var todate = jQuery('#todate').val();
 
-    var date1=fromdate.split(' ')[0];
-    var date2=todate.split(' ')[0];
+    var date1=fromdate;
+    var date2=todate;
 
     var dates1 = new Date(date1);
     var dates2 = new Date(date2);
