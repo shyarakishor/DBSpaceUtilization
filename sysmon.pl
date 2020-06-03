@@ -129,21 +129,24 @@ if( scalar @$csv_lines ) {
                                                         my $current_date = sprintf('%04d', $y).'-'.sprintf('%02d', $m).'-'.$months_day->{sprintf('%02d', $m)};
                                                         # if ( $current_date eq $month_last_date ) {
                                                             push @$final_data_array, {
-                                                                x => "new Date($y, $m, $d)",
-                                                                y => $value
+                                                                x => "new Date($y, $m, $d)".":".$hour,
+                                                                y => $value,
+                                                                label => $date_time
                                                             };
                                                         # }
                                                 }
                                                 elsif ( $graph_frequency =~ /hour/i ) {
                                                     push @$final_data_array, {
                                                         x => "new Date($y, $m, $d, $hour,0,0)",
-                                                        y => $value
+                                                        y => $value,
+                                                        label => $date_time
                                                     };
                                                 }
                                                 else {
                                                         push @$final_data_array, {
-                                                                x => "new Date($y, $m, $d)",
-                                                                y => $value
+                                                                x => "new Date($y, $m, $d, $hour,0,0)",
+                                                                y => $value,
+                                                                label => $date_time
                                                         };
                                                 }
                                         }
@@ -173,20 +176,23 @@ if( scalar @$csv_lines ) {
                                                         # print $month_last_date.'---'.$current_date."\n";
                                                         push @$final_data_array, {
                                                                 x => "new Date($y, $m, $d)",
-                                                                y => $value
+                                                                y => $value,
+                                                                label => $date_time
                                                         };
                                                 # }
                                         }
                                         elsif ( $graph_frequency =~ /hour/i ) {
                                             push @$final_data_array, {
                                                 x => "new Date($y, $m, $d, $hour,0,0)",
-                                                y => $value
+                                                y => $value,
+                                                label => $date_time
                                             };
                                         }
                                         else {
                                                 push @$final_data_array, {
-                                                        x => "new Date($y, $m, $d)",
-                                                        y => $value
+                                                        x => "new Date($y, $m, $d, $hour,0,0)",
+                                                        y => $value,
+                                                        label => $date_time
                                                 };
                                         }
                                         # push @$final_data_array, {
@@ -200,8 +206,12 @@ if( scalar @$csv_lines ) {
 }
 
 my $data_json = to_json( $final_data_array );
-$data_json =~ s/\"//g;
+$data_json =~ s/"x":"(.*?)"/x:$1/g;
+$data_json =~ s/"y":"(.*?)"/y:$1/g;
+$data_json =~ s/"label"/label/g;
+# $data_json =~ s/\"//g;
 ##generate template
+# print $data_json;
 
 my $config_template = {
         INCLUDE_PATH => $base_dir."/Templates",  # or list ref
@@ -511,7 +521,7 @@ var chart = new CanvasJS.Chart('chartContainer',
         interval:10,
         suffix: "%",
         maximum: 100,
-        includeZero: false
+        includeZero: false,
       },
       data: [
       {
