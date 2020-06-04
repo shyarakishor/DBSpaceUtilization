@@ -129,9 +129,9 @@ if( scalar @$csv_lines ) {
                                                         my $current_date = sprintf('%04d', $y).'-'.sprintf('%02d', $m).'-'.$months_day->{sprintf('%02d', $m)};
                                                         # if ( $current_date eq $month_last_date ) {
                                                             push @$final_data_array, {
-                                                                x => "new Date($y, $m, $d)".":".$hour,
+                                                                x => "new Date($y, $m, $d)",
                                                                 y => $value,
-                                                                label => $date_time
+                                                                toolTipContent => $date_time.': '.$value
                                                             };
                                                         # }
                                                 }
@@ -139,14 +139,14 @@ if( scalar @$csv_lines ) {
                                                     push @$final_data_array, {
                                                         x => "new Date($y, $m, $d, $hour,0,0)",
                                                         y => $value,
-                                                        label => $date_time
+                                                        toolTipContent => $date_time.': '.$value
                                                     };
                                                 }
                                                 else {
                                                         push @$final_data_array, {
-                                                                x => "new Date($y, $m, $d, $hour,0,0)",
+                                                                x => "new Date($y, $m, $d)",
                                                                 y => $value,
-                                                                label => $date_time
+                                                                toolTipContent => $date_time.': '.$value
                                                         };
                                                 }
                                         }
@@ -177,7 +177,7 @@ if( scalar @$csv_lines ) {
                                                         push @$final_data_array, {
                                                                 x => "new Date($y, $m, $d)",
                                                                 y => $value,
-                                                                label => $date_time
+                                                                toolTipContent => $date_time.': '.$value
                                                         };
                                                 # }
                                         }
@@ -185,14 +185,14 @@ if( scalar @$csv_lines ) {
                                             push @$final_data_array, {
                                                 x => "new Date($y, $m, $d, $hour,0,0)",
                                                 y => $value,
-                                                label => $date_time
+                                                toolTipContent => $date_time.': '.$value
                                             };
                                         }
                                         else {
                                                 push @$final_data_array, {
-                                                        x => "new Date($y, $m, $d, $hour,0,0)",
+                                                        x => "new Date($y, $m, $d)",
                                                         y => $value,
-                                                        label => $date_time
+                                                        toolTipContent => $date_time.': '.$value
                                                 };
                                         }
                                         # push @$final_data_array, {
@@ -208,7 +208,7 @@ if( scalar @$csv_lines ) {
 my $data_json = to_json( $final_data_array );
 $data_json =~ s/"x":"(.*?)"/x:$1/g;
 $data_json =~ s/"y":"(.*?)"/y:$1/g;
-$data_json =~ s/"label"/label/g;
+$data_json =~ s/"toolTipContent"/toolTipContent/g;
 # $data_json =~ s/\"//g;
 ##generate template
 # print $data_json;
@@ -230,7 +230,7 @@ if ( $@ ) {
 
 ##feeddata in template
 my $template_hash = {};
-my $interval = 1;
+my $interval = 0;
 my $interval_type = '';
 if ( $graph_frequency =~ /Day/i ) {
         $template_hash->{'value_format_string'} = 'MM/DD/YYYY';
