@@ -421,7 +421,7 @@ print <<BODY;
     <option value="24:00" selected>24:00</option>
   <select><br><br>
   <input class="signin" type="submit" value="Submit">
-</form> 
+</form>
 </div>
 </body>
 BODY
@@ -449,7 +449,7 @@ function check_validation() {
 
     var dates1 = new Date(date1);
     var dates2 = new Date(date2);
-    var diffDays = parseInt((dates2 - dates1) / (1000 * 60 * 60 * 24), 10); 
+    var diffDays = parseInt((dates2 - dates1) / (1000 * 60 * 60 * 24), 10);
 
     if ( graph_frequency == 'hour' ) {
         if ( date1 != date2 ) {
@@ -521,7 +521,7 @@ var chart = new CanvasJS.Chart('chartContainer',
         interval:10,
         suffix: "%",
         maximum: 100,
-        includeZero: false,
+        includeZero: false
       },
       data: [
       {
